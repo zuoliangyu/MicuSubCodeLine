@@ -76,11 +76,7 @@ impl SetupWizard {
             .join("micusubcodeline");
 
         // 目标可执行文件路径
-        let target_exe = install_dir.join(
-            current_exe
-                .file_name()
-                .ok_or("无法获取可执行文件名")?
-        );
+        let target_exe = install_dir.join(current_exe.file_name().ok_or("无法获取可执行文件名")?);
 
         // 检查是否已经在安装目录中运行
         if current_exe.canonicalize().ok() == target_exe.canonicalize().ok() {
@@ -117,9 +113,7 @@ impl SetupWizard {
         println!("\n🔄 现在将从安装目录启动程序...\n");
 
         // 从安装目录重新启动程序
-        let status = std::process::Command::new(&target_exe)
-            .spawn()?
-            .wait()?;
+        let status = std::process::Command::new(&target_exe).spawn()?.wait()?;
 
         // 退出当前进程
         std::process::exit(status.code().unwrap_or(0));

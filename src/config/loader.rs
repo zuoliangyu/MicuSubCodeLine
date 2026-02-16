@@ -145,7 +145,9 @@ impl Config {
     /// Get the default config file path (~/.claude/micusubcodeline/config.toml)
     fn get_config_path() -> PathBuf {
         if let Some(home) = dirs::home_dir() {
-            home.join(".claude").join("micusubcodeline").join("config.toml")
+            home.join(".claude")
+                .join("micusubcodeline")
+                .join("config.toml")
         } else {
             PathBuf::from(".claude/micusubcodeline/config.toml")
         }

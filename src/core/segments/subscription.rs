@@ -33,9 +33,18 @@ impl Segment for SubscriptionSegment {
 
         let mut metadata = HashMap::new();
         metadata.insert("group_name".to_string(), subscription.group_name.clone());
-        metadata.insert("daily_cost".to_string(), subscription.daily_used_usd.to_string());
-        metadata.insert("weekly_cost".to_string(), subscription.weekly_used_usd.to_string());
-        metadata.insert("weekly_limit".to_string(), subscription.weekly_limit_usd.to_string());
+        metadata.insert(
+            "daily_cost".to_string(),
+            subscription.daily_used_usd.to_string(),
+        );
+        metadata.insert(
+            "weekly_cost".to_string(),
+            subscription.weekly_used_usd.to_string(),
+        );
+        metadata.insert(
+            "weekly_limit".to_string(),
+            subscription.weekly_limit_usd.to_string(),
+        );
 
         Some(SegmentData {
             primary,

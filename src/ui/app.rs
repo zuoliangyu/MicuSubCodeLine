@@ -386,7 +386,10 @@ impl App {
             .split(f.area());
 
         // Title
-        let title_text = format!("MicuSubCodeLine Configurator v{}", env!("CARGO_PKG_VERSION"));
+        let title_text = format!(
+            "MicuSubCodeLine Configurator v{}",
+            env!("CARGO_PKG_VERSION")
+        );
         let title = Paragraph::new(title_text)
             .block(Block::default().borders(Borders::ALL))
             .style(Style::default().fg(Color::Cyan))
