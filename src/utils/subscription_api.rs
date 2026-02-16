@@ -81,9 +81,7 @@ impl SubscriptionApi {
 
     /// 检查配置文件是否存在
     pub fn config_exists() -> bool {
-        Self::get_config_path()
-            .map(|p| p.exists())
-            .unwrap_or(false)
+        Self::get_config_path().map(|p| p.exists()).unwrap_or(false)
     }
 
     /// 创建配置文件模板

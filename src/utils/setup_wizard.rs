@@ -127,7 +127,9 @@ impl SetupWizard {
 
     fn get_config_path() -> Option<PathBuf> {
         dirs::home_dir().map(|home| {
-            home.join(".claude").join("micusubcodeline").join("subscription_config.txt")
+            home.join(".claude")
+                .join("micusubcodeline")
+                .join("subscription_config.txt")
         })
     }
 
@@ -214,13 +216,19 @@ impl SetupWizard {
             let exe_path = std::env::current_exe()
                 .ok()
                 .and_then(|p| p.to_str().map(String::from))
-                .unwrap_or_else(|| "C:\\Users\\你的用户名\\.claude\\micusubcodeline\\micusubcodeline.exe".to_string());
+                .unwrap_or_else(|| {
+                    "C:\\Users\\你的用户名\\.claude\\micusubcodeline\\micusubcodeline.exe"
+                        .to_string()
+                });
 
             println!("   添加以下配置:");
             println!("   {{");
             println!("     \"statusLine\": {{");
             println!("       \"type\": \"command\",");
-            println!("       \"command\": \"{}\",", exe_path.replace("\\", "\\\\"));
+            println!(
+                "       \"command\": \"{}\",",
+                exe_path.replace("\\", "\\\\")
+            );
             println!("       \"padding\": 0");
             println!("     }}");
             println!("   }}");
