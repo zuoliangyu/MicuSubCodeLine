@@ -139,7 +139,7 @@ impl SetupWizard {
             .unwrap_or("")
             .trim();
 
-        Ok(token.is_empty() || token == "your_api_key_here" || token == "your_jwt_token_here")
+        Ok(token.is_empty() || token == "your_api_key_here")
     }
 
     fn create_and_setup(config_path: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {

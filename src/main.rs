@@ -42,7 +42,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         if SubscriptionApi::config_exists() {
             println!("✓ Subscription configuration already exists");
-            if let Some(path) = dirs::home_dir().map(|h| h.join(".claude").join("micusubcodeline").join("subscription_config.txt")) {
+            if let Some(path) = dirs::home_dir().map(|h| {
+                h.join(".claude")
+                    .join("micusubcodeline")
+                    .join("subscription_config.txt")
+            }) {
                 println!("  Location: {}", path.display());
             }
         } else {
@@ -51,14 +55,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     println!("✓ Created subscription configuration template");
                     println!("  Location: {}", path.display());
                     println!("\n📝 Next steps:");
-                    println!("  1. Open the file and replace 'your_jwt_token_here' with your JWT token");
-                    println!("  2. To get your JWT token:");
+                    println!(
+                        "  1. Open the file and replace 'your_api_key_here' with your API Key"
+                    );
+                    println!("  2. To get your API Key:");
                     println!("     - Login to https://sub.openclaudecode.cn");
-                    println!("     - Press F12 to open DevTools");
-                    println!("     - Go to Network tab");
-                    println!("     - Refresh the page and filter 'me?' request");
-                    println!("     - Click the request and view Headers");
-                    println!("     - Find 'Authorization' field and copy the value after 'Bearer'");
+                    println!("     - Go to API Keys management page");
+                    println!("     - Create or copy your API Key (format: sk-xxx)");
                 }
                 Err(e) => {
                     eprintln!("❌ Failed to create configuration: {}", e);

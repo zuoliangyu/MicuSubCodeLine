@@ -63,8 +63,7 @@ impl SubscriptionApi {
             .trim()
             .to_string();
 
-        if api_key.is_empty() || api_key == "your_api_key_here" || api_key == "your_jwt_token_here"
-        {
+        if api_key.is_empty() || api_key == "your_api_key_here" {
             return None;
         }
 

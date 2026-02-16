@@ -38,7 +38,7 @@ cargo build --release
 1. 检测是否已安装到 `~/.claude/micusubcodeline/` 目录
 2. 如果未安装，自动创建目录并复制可执行文件
 3. 从安装目录重新启动程序
-4. 启动配置向导，引导您配置 JWT Token
+4. 启动配置向导，引导您配置 API Key
 5. 自动初始化默认配置文件
 
 **安装位置：**
@@ -52,7 +52,7 @@ cargo build --release
 双击可执行文件，程序会自动：
 - 安装到标准目录
 - 检测配置并启动配置向导
-- 引导您配置 JWT Token
+- 引导您配置 API Key
 - 自动初始化配置文件
 
 **方式二：使用命令行**
@@ -64,30 +64,26 @@ micusubcodeline --init-subscription
 
 这会在 `~/.claude/micusubcodeline/` 目录创建 `subscription_config.txt` 文件。
 
-### 4. 配置 JWT Token
+### 4. 配置 API Key
 
 配置文件位置：
 - **Windows**: `C:\Users\你的用户名\.claude\micusubcodeline\subscription_config.txt`
 - **Linux/macOS**: `~/.claude/micusubcodeline/subscription_config.txt`
 
-#### 获取 Token 方法：
+#### 获取 API Key 方法：
 
 1. 打开浏览器，访问 https://sub.openclaudecode.cn 并登录
-2. 按 `F12` 打开开发者工具
-3. 切换到 **Network（网络）** 标签
-4. 刷新页面，在请求列表中筛选 `me?` 这个请求
-5. 点击该请求，查看 **Headers（请求头）** 部分
-6. 找到 `Authorization` 字段，复制 `Bearer` 后面的内容
-7. 将复制的值粘贴到 `subscription_config.txt` 文件中
+2. 进入 **API Keys** 管理页面
+3. 创建或复制您的 API Key（格式: `sk-xxx`）
+4. 将复制的值粘贴到 `subscription_config.txt` 文件中
 
 **配置文件格式：**
 ```
 # Sub2API 订阅配置
-# 请在下方填写您的 JWT Token
-# 获取方法：(见上方说明)
+# 请在下方填写您的 API Key（从 Sub2API 面板获取，格式: sk-xxx）
 # 配置文件位置: ~/.claude/micusubcodeline/subscription_config.txt
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+sk-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 ### 5. 配置 Claude Code
@@ -182,7 +178,7 @@ micusubcodeline --theme nord
 
 **可能原因：**
 1. 未配置 `subscription_config.txt`
-2. JWT Token 无效或过期
+2. API Key 无效
 3. 网络连接问题
 4. subscription segment 被禁用
 
@@ -191,7 +187,7 @@ micusubcodeline --theme nord
 # 1. 检查配置文件是否存在
 micusubcodeline --init-subscription
 
-# 2. 验证 Token 是否正确（检查文件内容）
+# 2. 验证 API Key 是否正确（检查文件内容）
 # Windows: notepad %USERPROFILE%\.claude\micusubcodeline\subscription_config.txt
 # Linux/macOS: cat ~/.claude/micusubcodeline/subscription_config.txt
 
@@ -202,11 +198,11 @@ micusubcodeline --init-subscription
 micusubcodeline --config
 ```
 
-### 问题2: Token 过期
+### 问题2: API Key 无效
 
-JWT Token 会过期，需要重新获取：
-1. 重新登录 https://sub.openclaudecode.cn
-2. 按照上述方法重新获取 Token
+如果 API Key 不可用，请重新获取：
+1. 登录 https://sub.openclaudecode.cn
+2. 进入 API Keys 管理页面，创建新的 API Key
 3. 更新配置文件：
    - Windows: `C:\Users\你的用户名\.claude\micusubcodeline\subscription_config.txt`
    - Linux/macOS: `~/.claude/micusubcodeline/subscription_config.txt`
@@ -244,11 +240,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ## 安全说明
 
-- `subscription_config.txt` 包含敏感的 JWT Token
+- `subscription_config.txt` 包含敏感的 API Key
 - 配置文件位置：`~/.claude/micusubcodeline/subscription_config.txt`
 - 请勿将该文件提交到公开仓库
-- 定期更换 Token 以确保安全
-- Token 具有完整账号权限，请妥善保管
+- API Key 具有账号权限，请妥善保管
 - 分发程序时不要包含配置文件，让用户自行配置
 - 程序首次运行会自动安装到 `~/.claude/micusubcodeline/` 目录
 
