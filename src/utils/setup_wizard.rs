@@ -147,7 +147,7 @@ impl SetupWizard {
         // 创建配置文件模板
         let template = "# your_api_key_here";
 
-        std::fs::write(&config_path, template)?;
+        std::fs::write(config_path, template)?;
         println!("✅ 配置文件已创建: {}", config_path.display());
 
         Self::prompt_token_setup(config_path)?;
@@ -192,7 +192,7 @@ impl SetupWizard {
         Ok(())
     }
 
-    fn print_next_steps(config_path: &PathBuf) {
+    fn print_next_steps(config_path: &std::path::Path) {
         println!("\n╔══════════════════════════════════════════════════════════════╗");
         println!("║                        下一步操作                            ║");
         println!("╚══════════════════════════════════════════════════════════════╝");

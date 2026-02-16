@@ -13,7 +13,6 @@ struct UsageResponse {
     is_valid: Option<bool>,
     #[serde(rename = "planName")]
     plan_name: Option<String>,
-    remaining: Option<f64>,
     subscription: Option<UsageSubscription>,
     balance: Option<f64>,
     usage: Option<UsageStats>,
@@ -22,10 +21,8 @@ struct UsageResponse {
 #[derive(Deserialize)]
 struct UsageSubscription {
     daily_usage_usd: Option<f64>,
-    daily_limit_usd: Option<f64>,
     weekly_usage_usd: Option<f64>,
     weekly_limit_usd: Option<f64>,
-    expires_at: Option<String>,
     resets_in_seconds: Option<i64>,
 }
 
@@ -144,16 +141,14 @@ impl SubscriptionApi {
             })
         }
         // 余额模式
-        else if let Some(balance) = data.balance {
-            Some(Subscription {
+        else {
+            data.balance.map(|balance| Subscription {
                 group_name,
                 daily_used_usd: today_cost,
                 weekly_used_usd: 0.0,
                 weekly_limit_usd: balance,
                 resets_in_seconds: None,
             })
-        } else {
-            None
         }
     }
 }
