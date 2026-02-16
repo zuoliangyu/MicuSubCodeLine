@@ -1,0 +1,21 @@
+/target
+/temp
+/sub2api_temp
+
+# Subscription configuration (contains sensitive API Keys)
+subscription_config.txt
+
+# IDE and editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude Code local files
+.claude/
+.spec-workflow/
