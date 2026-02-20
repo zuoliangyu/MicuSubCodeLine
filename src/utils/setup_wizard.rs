@@ -48,7 +48,10 @@ impl SetupWizard {
         println!("\n🔍 正在检测 API Key...");
 
         if SubscriptionApi::load().is_some() {
-            println!("✅ 已自动检测到 API Key（来源: {}）", Self::detect_key_source());
+            println!(
+                "✅ 已自动检测到 API Key（来源: {}）",
+                Self::detect_key_source()
+            );
         } else {
             println!("\n⚠️  未检测到 API Key");
             println!("   请确保在 Claude Code 的 settings.json 中配置了 API Key：");

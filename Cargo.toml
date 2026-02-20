@@ -1,6 +1,6 @@
 [package]
 name = "micusubcodeline"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 description = "MicuSubCodeLine - Claude Code StatusLine with Sub2API subscription integration"
 authors = ["Haleclipse", "Sub2API Extension"]

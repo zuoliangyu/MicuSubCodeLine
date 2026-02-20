@@ -20,7 +20,7 @@ The statusline shows: Model | Directory | Git Branch Status | Context Window | S
 - **Model display** with simplified Claude model names
 - **Usage tracking** based on transcript analysis
 - **Directory display** showing current workspace
-- **Subscription display** real-time Sub2API subscription info
+- **Subscription display** real-time Sub2API subscription info (auto-reads API Key from Claude Code settings, zero config)
 - **Minimal design** using Nerd Font icons
 
 ### Interactive TUI Features
@@ -132,6 +132,21 @@ Add to your Claude Code `settings.json`:
 ```
 
 ## Usage
+
+### Subscription Info (Zero Config)
+
+The subscription segment automatically reads your API Key from Claude Code's settings — no manual configuration needed.
+
+Reading priority:
+1. `~/.claude/settings.local.json` → `env.ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
+2. `~/.claude/settings.json` → `env.ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
+3. Environment variable `ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
+4. `~/.claude/micusubcodeline/subscription_config.txt` (legacy fallback)
+
+```bash
+# Check API Key detection status
+micusubcodeline --init-subscription
+```
 
 ### Configuration Management
 

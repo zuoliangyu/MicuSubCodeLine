@@ -20,7 +20,7 @@
 - **模型显示** 简化的 Claude 模型名称
 - **使用量跟踪** 基于转录文件分析
 - **目录显示** 显示当前工作空间
-- **订阅信息** 实时显示 Sub2API 订阅状态
+- **订阅信息** 实时显示 Sub2API 订阅状态（自动读取 Claude Code 配置中的 API Key，无需手动配置）
 - **简洁设计** 使用 Nerd Font 图标
 
 ### 交互式 TUI 功能
@@ -132,6 +132,21 @@ copy target\release\micusubcodeline.exe "$env:USERPROFILE\.claude\micusubcodelin
 ```
 
 ## 使用
+
+### 订阅信息（即下即用）
+
+订阅段落会自动从 Claude Code 的配置中读取 API Key，无需手动配置。
+
+读取优先级：
+1. `~/.claude/settings.local.json` → `env.ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
+2. `~/.claude/settings.json` → `env.ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
+3. 环境变量 `ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
+4. `~/.claude/micusubcodeline/subscription_config.txt`（旧版兼容）
+
+```bash
+# 检测 API Key 状态
+micusubcodeline --init-subscription
+```
 
 ### 配置管理
 

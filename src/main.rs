@@ -53,7 +53,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("❌ 未检测到 API Key");
             println!("\n   支持的读取位置（按优先级）：");
             println!("   1. ~/.claude/settings.local.json → env.ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN");
-            println!("   2. ~/.claude/settings.json → env.ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN");
+            println!(
+                "   2. ~/.claude/settings.json → env.ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN"
+            );
             println!("   3. 环境变量 ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN");
             println!("   4. ~/.claude/micusubcodeline/subscription_config.txt");
         }

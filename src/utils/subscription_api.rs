@@ -10,10 +10,7 @@ const BASE_URL: &str = "https://sub.openclaudecode.cn";
 const SETTINGS_FILES: &[&str] = &["settings.local.json", "settings.json"];
 
 /// settings.json 中可能存放 API Key 的字段名（按优先级）
-const API_KEY_FIELDS: &[&str] = &[
-    "ANTHROPIC_API_KEY",
-    "ANTHROPIC_AUTH_TOKEN",
-];
+const API_KEY_FIELDS: &[&str] = &["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN"];
 
 /// GET /v1/usage 统一响应结构
 #[derive(Deserialize)]
