@@ -40,34 +40,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if cli.init_subscription {
         use micusubcodeline::utils::SubscriptionApi;
 
-        if SubscriptionApi::config_exists() {
-            println!("✓ Subscription configuration already exists");
-            if let Some(path) = dirs::home_dir().map(|h| {
-                h.join(".claude")
-                    .join("micusubcodeline")
-                    .join("subscription_config.txt")
-            }) {
-                println!("  Location: {}", path.display());
+        println!("🔍 检测 API Key 状态...\n");
+        if let Some(api) = SubscriptionApi::load() {
+            println!("✅ API Key 已检测到");
+            if let Some(sub) = api.get_subscription_info() {
+                println!("   分组: {}", sub.group_name);
+                println!("   今日消费: ${:.4}", sub.daily_used_usd);
+            } else {
+                println!("   ⚠️  Key 已读取但无法获取订阅信息，请检查 Key 是否有效");
             }
         } else {
-            match SubscriptionApi::create_config_template() {
-                Ok(path) => {
-                    println!("✓ Created subscription configuration template");
-                    println!("  Location: {}", path.display());
-                    println!("\n📝 Next steps:");
-                    println!(
-                        "  1. Open the file and replace 'your_api_key_here' with your API Key"
-                    );
-                    println!("  2. To get your API Key:");
-                    println!("     - Login to https://sub.openclaudecode.cn");
-                    println!("     - Go to API Keys management page");
-                    println!("     - Create or copy your API Key (format: sk-xxx)");
-                }
-                Err(e) => {
-                    eprintln!("❌ Failed to create configuration: {}", e);
-                    std::process::exit(1);
-                }
-            }
+            println!("❌ 未检测到 API Key");
+            println!("\n   支持的读取位置（按优先级）：");
+            println!("   1. ~/.claude/settings.local.json → env.ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN");
+            println!("   2. ~/.claude/settings.json → env.ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN");
+            println!("   3. 环境变量 ANTHROPIC_API_KEY / ANTHROPIC_AUTH_TOKEN");
+            println!("   4. ~/.claude/micusubcodeline/subscription_config.txt");
         }
         return Ok(());
     }

@@ -6,6 +6,15 @@ use std::path::PathBuf;
 const CONFIG_FILE: &str = "subscription_config.txt";
 const BASE_URL: &str = "https://sub.openclaudecode.cn";
 
+/// Claude Code settings 文件读取优先级（从高到低）
+const SETTINGS_FILES: &[&str] = &["settings.local.json", "settings.json"];
+
+/// settings.json 中可能存放 API Key 的字段名（按优先级）
+const API_KEY_FIELDS: &[&str] = &[
+    "ANTHROPIC_API_KEY",
+    "ANTHROPIC_AUTH_TOKEN",
+];
+
 /// GET /v1/usage 统一响应结构
 #[derive(Deserialize)]
 struct UsageResponse {
@@ -42,7 +51,74 @@ pub struct SubscriptionApi {
 
 impl SubscriptionApi {
     /// 加载订阅API配置
+    /// 优先级：settings.local.json > settings.json > 环境变量 > subscription_config.txt
     pub fn load() -> Option<Self> {
+        // 1. 尝试从 Claude Code settings 文件读取
+        if let Some(api_key) = Self::read_key_from_claude_settings() {
+            return Some(Self { api_key });
+        }
+
+        // 2. 尝试从环境变量读取
+        if let Some(api_key) = Self::read_key_from_env() {
+            return Some(Self { api_key });
+        }
+
+        // 3. 回退到 subscription_config.txt
+        Self::read_key_from_config_file()
+    }
+
+    /// 从 Claude Code settings 文件中读取 ANTHROPIC_API_KEY
+    fn read_key_from_claude_settings() -> Option<String> {
+        let home = dirs::home_dir()?;
+        let claude_dir = home.join(".claude");
+
+        for filename in SETTINGS_FILES {
+            let path = claude_dir.join(filename);
+            if let Some(key) = Self::extract_api_key_from_settings(&path) {
+                return Some(key);
+            }
+        }
+
+        None
+    }
+
+    /// 从单个 settings JSON 文件中提取 API Key
+    fn extract_api_key_from_settings(path: &PathBuf) -> Option<String> {
+        let content = fs::read_to_string(path).ok()?;
+        let settings: serde_json::Value = serde_json::from_str(&content).ok()?;
+
+        let env = settings.get("env")?;
+
+        for field in API_KEY_FIELDS {
+            if let Some(key) = env
+                .get(*field)
+                .and_then(|v| v.as_str())
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+            {
+                return Some(key);
+            }
+        }
+
+        None
+    }
+
+    /// 从环境变量读取 API Key
+    fn read_key_from_env() -> Option<String> {
+        for field in API_KEY_FIELDS {
+            if let Some(key) = std::env::var(field)
+                .ok()
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+            {
+                return Some(key);
+            }
+        }
+        None
+    }
+
+    /// 从 subscription_config.txt 读取（原有逻辑）
+    fn read_key_from_config_file() -> Option<Self> {
         let config_path = Self::get_config_path()?;
 
         if !config_path.exists() {
@@ -50,7 +126,6 @@ impl SubscriptionApi {
         }
 
         let content = fs::read_to_string(&config_path).ok()?;
-        // 读取第一个非空非注释行作为 API Key
         let api_key = content
             .lines()
             .find(|line| {
@@ -74,30 +149,6 @@ impl SubscriptionApi {
                 .join("micusubcodeline")
                 .join(CONFIG_FILE)
         })
-    }
-
-    /// 检查配置文件是否存在
-    pub fn config_exists() -> bool {
-        Self::get_config_path().map(|p| p.exists()).unwrap_or(false)
-    }
-
-    /// 创建配置文件模板
-    pub fn create_config_template() -> Result<PathBuf, Box<dyn std::error::Error>> {
-        let config_path = Self::get_config_path().ok_or("Cannot determine home directory")?;
-
-        if let Some(parent) = config_path.parent() {
-            fs::create_dir_all(parent)?;
-        }
-
-        let template = "# MicuSubCodeLine 订阅配置\n\
-                       # 请在下方填写您的 API Key（从 Sub2API 面板获取，格式: sk-xxx）\n\
-                       #\n\
-                       # 配置文件位置: ~/.claude/micusubcodeline/subscription_config.txt\n\
-                       \n\
-                       your_api_key_here";
-
-        fs::write(&config_path, template)?;
-        Ok(config_path)
     }
 
     /// 获取订阅信息（通过 GET /v1/usage 统一端点）
