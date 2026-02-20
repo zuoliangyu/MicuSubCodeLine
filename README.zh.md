@@ -125,7 +125,7 @@ copy target\release\micusubcodeline.exe "$env:USERPROFILE\.claude\micusubcodelin
 {
   "statusLine": {
     "type": "command",
-    "command": "%USERPROFILE%\\.claude\\micusubcodeline\\micusubcodeline.exe",
+    "command": "C:/Users/zuolan/.claude/micusubcodeline/micusubcodeline.exe",
     "padding": 0
   }
 }
