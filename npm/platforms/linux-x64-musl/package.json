@@ -1,0 +1,14 @@
+{
+  "name": "@zuolan/micusubcodeline-linux-x64-musl",
+  "version": "1.2.0",
+  "description": "Linux x64 static binary for MicuSubCodeLine (musl libc)",
+  "files": ["micusubcodeline"],
+  "os": ["linux"],
+  "cpu": ["x64"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zuoliangyu/MicuSubCodeLine"
+  },
+  "author": "zuolan",
+  "license": "MIT"
+}

@@ -4,9 +4,11 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   build:
@@ -85,6 +87,7 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     needs: build
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -112,3 +115,82 @@ jobs:
         body_path: RELEASE_NOTES.md
         draft: false
         prerelease: false
+
+    - name: Setup Node.js for NPM
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Extract binaries from archives
+      run: |
+        mkdir -p extracted
+
+        # macOS x64
+        tar -xzf artifacts/micusubcodeline-macos-x64.tar.gz/micusubcodeline-macos-x64.tar.gz -C extracted
+        mv extracted/micusubcodeline extracted/micusubcodeline-darwin-x64
+
+        # macOS ARM64
+        tar -xzf artifacts/micusubcodeline-macos-arm64.tar.gz/micusubcodeline-macos-arm64.tar.gz -C extracted
+        mv extracted/micusubcodeline extracted/micusubcodeline-darwin-arm64
+
+        # Linux x64
+        tar -xzf artifacts/micusubcodeline-linux-x64.tar.gz/micusubcodeline-linux-x64.tar.gz -C extracted
+        mv extracted/micusubcodeline extracted/micusubcodeline-linux-x64
+
+        # Linux musl (static)
+        tar -xzf artifacts/micusubcodeline-linux-x64-static.tar.gz/micusubcodeline-linux-x64-static.tar.gz -C extracted
+        mv extracted/micusubcodeline extracted/micusubcodeline-linux-x64-musl
+
+        # Windows
+        unzip artifacts/micusubcodeline-windows-x64.zip/micusubcodeline-windows-x64.zip -d extracted
+        mv extracted/micusubcodeline.exe extracted/micusubcodeline-win32-x64.exe
+
+        ls -la extracted/
+
+    - name: Prepare NPM packages
+      run: |
+        node npm/scripts/prepare-packages.js
+
+        cp extracted/micusubcodeline-darwin-x64 npm-publish/darwin-x64/micusubcodeline
+        cp extracted/micusubcodeline-darwin-arm64 npm-publish/darwin-arm64/micusubcodeline
+        cp extracted/micusubcodeline-linux-x64 npm-publish/linux-x64/micusubcodeline
+        cp extracted/micusubcodeline-linux-x64-musl npm-publish/linux-x64-musl/micusubcodeline
+        cp extracted/micusubcodeline-win32-x64.exe npm-publish/win32-x64/micusubcodeline.exe
+
+        chmod +x npm-publish/darwin-x64/micusubcodeline
+        chmod +x npm-publish/darwin-arm64/micusubcodeline
+        chmod +x npm-publish/linux-x64/micusubcodeline
+        chmod +x npm-publish/linux-x64-musl/micusubcodeline
+
+        echo "Package structure:"
+        find npm-publish -name "package.json" -exec echo "=== {} ===" \; -exec head -5 {} \;
+
+    - name: Publish platform packages to NPM
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        for platform in darwin-x64 darwin-arm64 linux-x64 linux-x64-musl win32-x64; do
+          echo "📦 Publishing @zuolan/micusubcodeline-$platform"
+          cd npm-publish/$platform
+          npm publish --access public
+          cd ../..
+          echo "✅ Published @zuolan/micusubcodeline-$platform"
+        done
+
+    - name: Wait for NPM registry
+      run: |
+        echo "⏳ Waiting for platform packages to be available on NPM..."
+        sleep 30
+
+    - name: Publish main package to NPM
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: |
+        cd npm-publish/main
+        echo "📦 Publishing @zuolan/micusubcodeline"
+        npm publish --access public
+        echo "✅ Published @zuolan/micusubcodeline"
+        echo ""
+        echo "🎉 NPM packages published successfully!"
+        echo "Install with: npm install -g @zuolan/micusubcodeline"

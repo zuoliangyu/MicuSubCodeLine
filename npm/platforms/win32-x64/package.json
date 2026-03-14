@@ -1,0 +1,14 @@
+{
+  "name": "@zuolan/micusubcodeline-win32-x64",
+  "version": "1.2.0",
+  "description": "Windows x64 binary for MicuSubCodeLine",
+  "files": ["micusubcodeline.exe"],
+  "os": ["win32"],
+  "cpu": ["x64"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zuoliangyu/MicuSubCodeLine"
+  },
+  "author": "zuolan",
+  "license": "MIT"
+}

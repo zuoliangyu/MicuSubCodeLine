@@ -1,0 +1,14 @@
+{
+  "name": "@zuolan/micusubcodeline-darwin-arm64",
+  "version": "1.2.0",
+  "description": "macOS ARM64 binary for MicuSubCodeLine",
+  "files": ["micusubcodeline"],
+  "os": ["darwin"],
+  "cpu": ["arm64"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zuoliangyu/MicuSubCodeLine"
+  },
+  "author": "zuolan",
+  "license": "MIT"
+}
