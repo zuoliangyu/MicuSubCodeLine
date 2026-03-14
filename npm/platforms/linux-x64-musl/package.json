@@ -1,6 +1,6 @@
 {
   "name": "@zuolan/micusubcodeline-linux-x64-musl",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Linux x64 static binary for MicuSubCodeLine (musl libc)",
   "files": ["micusubcodeline"],
   "os": ["linux"],
