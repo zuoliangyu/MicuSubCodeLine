@@ -83,6 +83,13 @@ impl Segment for ContextWindowSegment {
     }
 }
 
+/// Public helper: number of context-window tokens used, parsed from the
+/// transcript (handles summary/leafUuid indirection). Used by the locked
+/// statusline renderer.
+pub fn context_used_tokens<P: AsRef<Path>>(transcript_path: P) -> Option<u32> {
+    parse_transcript_usage(transcript_path)
+}
+
 fn parse_transcript_usage<P: AsRef<Path>>(transcript_path: P) -> Option<u32> {
     let path = transcript_path.as_ref();
 

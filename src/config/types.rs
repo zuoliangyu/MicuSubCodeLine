@@ -115,9 +115,12 @@ pub struct OutputStyle {
 pub struct Subscription {
     pub group_name: String,
     pub daily_used_usd: f64,
+    pub daily_limit_usd: f64,
     pub weekly_used_usd: f64,
     pub weekly_limit_usd: f64,
     pub resets_in_seconds: Option<i64>,
+    /// Plan expiry timestamp string from `/v1/usage` (RFC3339), e.g. "2026-06-04T12:41:52+08:00"
+    pub expires_at: Option<String>,
 }
 
 #[derive(Deserialize)]

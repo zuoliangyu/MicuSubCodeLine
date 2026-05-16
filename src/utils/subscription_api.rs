@@ -4,7 +4,7 @@ use std::fs;
 use std::path::PathBuf;
 
 const CONFIG_FILE: &str = "subscription_config.txt";
-const BASE_URL: &str = "https://sub.openclaudecode.cn";
+const BASE_URL: &str = "https://sub.micuapi.ai";
 
 /// Claude Code settings 文件读取优先级（从高到低）
 const SETTINGS_FILES: &[&str] = &["settings.local.json", "settings.json"];
@@ -27,9 +27,11 @@ struct UsageResponse {
 #[derive(Deserialize)]
 struct UsageSubscription {
     daily_usage_usd: Option<f64>,
+    daily_limit_usd: Option<f64>,
     weekly_usage_usd: Option<f64>,
     weekly_limit_usd: Option<f64>,
     resets_in_seconds: Option<i64>,
+    expires_at: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -183,9 +185,11 @@ impl SubscriptionApi {
             Some(Subscription {
                 group_name,
                 daily_used_usd: sub.daily_usage_usd.unwrap_or(today_cost),
+                daily_limit_usd: sub.daily_limit_usd.unwrap_or(0.0),
                 weekly_used_usd: sub.weekly_usage_usd.unwrap_or(0.0),
                 weekly_limit_usd: sub.weekly_limit_usd.unwrap_or(0.0),
                 resets_in_seconds: sub.resets_in_seconds,
+                expires_at: sub.expires_at.clone(),
             })
         }
         // 余额模式
@@ -193,9 +197,11 @@ impl SubscriptionApi {
             data.balance.map(|balance| Subscription {
                 group_name,
                 daily_used_usd: today_cost,
+                daily_limit_usd: 0.0,
                 weekly_used_usd: 0.0,
                 weekly_limit_usd: balance,
                 resets_in_seconds: None,
+                expires_at: None,
             })
         }
     }

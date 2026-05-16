@@ -72,7 +72,7 @@ micusubcodeline --init-subscription
 
 #### 获取 API Key 方法：
 
-1. 打开浏览器，访问 https://sub.openclaudecode.cn 并登录
+1. 打开浏览器，访问 https://sub.micuapi.ai 并登录
 2. 进入 **API Keys** 管理页面
 3. 创建或复制您的 API Key（格式: `sk-xxx`）
 4. 将复制的值粘贴到 `subscription_config.txt` 文件中
@@ -192,7 +192,7 @@ micusubcodeline --init-subscription
 # Linux/macOS: cat ~/.claude/micusubcodeline/subscription_config.txt
 
 # 3. 测试网络连接
-# 访问 https://sub.openclaudecode.cn/api/v1/subscriptions/summary
+# 访问 https://sub.micuapi.ai/api/v1/subscriptions/summary
 
 # 4. 检查 segment 是否启用
 micusubcodeline --config
@@ -201,7 +201,7 @@ micusubcodeline --config
 ### 问题2: API Key 无效
 
 如果 API Key 不可用，请重新获取：
-1. 登录 https://sub.openclaudecode.cn
+1. 登录 https://sub.micuapi.ai
 2. 进入 API Keys 管理页面，创建新的 API Key
 3. 更新配置文件：
    - Windows: `C:\Users\你的用户名\.claude\micusubcodeline\subscription_config.txt`

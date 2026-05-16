@@ -1,48 +1,46 @@
 # MicuSubCodeLine
 
-[English](README.md) | [中文](README.zh.md)
+[English](README.en.md) | [中文](README.md)
 
-A high-performance Claude Code statusline tool written in Rust with Git integration, usage tracking, interactive TUI configuration, Sub2API subscription display, and Claude Code enhancement utilities.
+基于 Rust 的高性能 Claude Code 状态栏工具，集成 Git 信息、使用量跟踪、Sub2API 订阅信息显示和 Claude Code 补丁工具。
 
 ![Language:Rust](https://img.shields.io/static/v1?label=Language&message=Rust&color=orange&style=flat-square)
 ![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
 
-## Screenshots
+> ⚠️ **v2.0.0 重大变更（破坏性）**：状态栏现在渲染**固定锁死的 3 行布局**，**无法**通过任何配置文件、主题文件、`--theme` 参数或 TUI 编辑改动。订阅数据来自 **`https://sub.micuapi.ai`**。如果你在 v1.x 依赖自定义 `config.toml`/主题，升级后这些将不再作用于状态栏渲染。
 
-![MicuSubCodeLine](assets/img1.png)
+## 截图
 
-The statusline shows: Model | Directory | Git Branch Status | Context Window | Subscription Info
+![MicuSubCodeLine](assets/展示图.png)
 
-## Features
+锁定的状态栏固定渲染三行：
 
-### Core Functionality
-- **Git integration** with branch, status, and tracking info
-- **Model display** with simplified Claude model names
-- **Usage tracking** based on transcript analysis
-- **Directory display** showing current workspace
-- **Subscription display** real-time Sub2API subscription info (auto-reads API Key from Claude Code settings, zero config)
-- **Minimal design** using Nerd Font icons
+- **第 1 行** — `模型` · `上下文` · `⌥ 分支` · `(+N,−N)` Git 变更 · `合计`（吞吐 t/s）
+- **第 2 行** — `会话` · `费用` · `cwd` 当前工作目录
+- **第 3 行** — 套餐名 · `每日`（$已用/$限额）· `每周`（$已用/$限额）· `到期`（剩余天数）
 
-### Interactive TUI Features
-- **Interactive main menu** when executed without input
-- **TUI configuration interface** with real-time preview
-- **Theme system** with multiple built-in presets
-- **Segment customization** with granular control
-- **Configuration management** (init, check, edit)
+## 特性
 
-### Claude Code Enhancement
-- **Context warning disabler** - Remove annoying "Context low" messages
-- **Verbose mode enabler** - Enhanced output detail
-- **Robust patcher** - Survives Claude Code version updates
-- **Automatic backups** - Safe modification with easy recovery
+### 核心功能
+- **固定锁定布局** — 像素稳定的 3 行 powerline 输出，用户不可改
+- **Git 集成** 显示分支与工作区改动行数
+- **模型显示** 简化的 Claude 模型名称
+- **上下文 / 吞吐** 基于转录文件分析（token、t/s）
+- **订阅信息** 实时显示来自 `https://sub.micuapi.ai` 的 Sub2API 订阅状态（自动读取 Claude Code 配置中的 API Key，无需手动配置）
 
-## Installation
+### Claude Code 增强
+- **禁用上下文警告** 移除烦人的“Context low”消息
+- **启用详细模式** 增强输出详细信息
+- **稳定补丁器** 适应 Claude Code 版本更新
+- **自动备份** 安全修改，支持轻松恢复
 
-### Download Pre-built Binary
+## 安装
 
-Download from [Releases](https://github.com/zuoliangyu/MicuSubCodeLine/releases):
+### 下载预编译二进制
 
-#### Linux (Dynamic)
+从 [Releases](https://github.com/zuoliangyu/MicuSubCodeLine/releases) 下载：
+
+#### Linux（动态链接版本）
 ```bash
 mkdir -p ~/.claude/micusubcodeline
 wget https://github.com/zuoliangyu/MicuSubCodeLine/releases/latest/download/micusubcodeline-linux-x64.tar.gz
@@ -50,9 +48,9 @@ tar -xzf micusubcodeline-linux-x64.tar.gz
 cp micusubcodeline ~/.claude/micusubcodeline/
 chmod +x ~/.claude/micusubcodeline/micusubcodeline
 ```
-*Requires: Ubuntu 22.04+, CentOS 9+, Debian 11+, RHEL 9+ (glibc 2.35+)*
+*系统要求: Ubuntu 22.04+, CentOS 9+, Debian 11+, RHEL 9+ (glibc 2.35+)*
 
-#### Linux (Static)
+#### Linux（静态链接版本）
 ```bash
 mkdir -p ~/.claude/micusubcodeline
 wget https://github.com/zuoliangyu/MicuSubCodeLine/releases/latest/download/micusubcodeline-linux-x64-static.tar.gz
@@ -60,7 +58,7 @@ tar -xzf micusubcodeline-linux-x64-static.tar.gz
 cp micusubcodeline ~/.claude/micusubcodeline/
 chmod +x ~/.claude/micusubcodeline/micusubcodeline
 ```
-*Works on any Linux distribution (static, no dependencies)*
+*适用于任何 Linux 发行版（静态链接，无依赖）*
 
 #### macOS (Intel)
 ```bash
@@ -88,7 +86,7 @@ Expand-Archive -Path "micusubcodeline-windows-x64.zip" -DestinationPath "."
 Move-Item "micusubcodeline.exe" "$env:USERPROFILE\.claude\micusubcodeline\"
 ```
 
-### Build from Source
+### 从源码构建
 
 ```bash
 git clone https://github.com/zuoliangyu/MicuSubCodeLine.git
@@ -105,9 +103,9 @@ New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\micusubcodel
 copy target\release\micusubcodeline.exe "$env:USERPROFILE\.claude\micusubcodeline\"
 ```
 
-### Claude Code Configuration
+### Claude Code 配置
 
-Add to your Claude Code `settings.json`:
+添加到 Claude Code `settings.json`：
 
 **Linux/macOS:**
 ```json
@@ -131,124 +129,68 @@ Add to your Claude Code `settings.json`:
 }
 ```
 
-## Usage
+## 使用
 
-### Subscription Info (Zero Config)
+### 订阅信息（即下即用）
 
-The subscription segment automatically reads your API Key from Claude Code's settings — no manual configuration needed.
+订阅行会自动从 Claude Code 的配置中读取 API Key，无需手动配置。数据请求自 `https://sub.micuapi.ai/v1/usage`。
 
-Reading priority:
+读取优先级：
 1. `~/.claude/settings.local.json` → `env.ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
 2. `~/.claude/settings.json` → `env.ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
-3. Environment variable `ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
-4. `~/.claude/micusubcodeline/subscription_config.txt` (legacy fallback)
+3. 环境变量 `ANTHROPIC_API_KEY` / `ANTHROPIC_AUTH_TOKEN`
+4. `~/.claude/micusubcodeline/subscription_config.txt`（旧版兼容）
 
 ```bash
-# Check API Key detection status
+# 检测 API Key 状态
 micusubcodeline --init-subscription
 ```
 
-### Configuration Management
+### Claude Code 增强
 
 ```bash
-# Initialize configuration file
-micusubcodeline --init
-
-# Check configuration validity
-micusubcodeline --check
-
-# Print current configuration
-micusubcodeline --print
-
-# Enter TUI configuration mode
-micusubcodeline --config
-```
-
-### Theme Override
-
-```bash
-# Temporarily use specific theme (overrides config file)
-micusubcodeline --theme cometix
-micusubcodeline --theme minimal
-micusubcodeline --theme gruvbox
-micusubcodeline --theme nord
-micusubcodeline --theme powerline-dark
-
-# Or use custom theme files from ~/.claude/micusubcodeline/themes/
-micusubcodeline --theme my-custom-theme
-```
-
-### Claude Code Enhancement
-
-```bash
-# Disable context warnings and enable verbose mode
+# 禁用上下文警告并启用详细模式
 micusubcodeline --patch /path/to/claude-code/cli.js
 ```
 
-## Default Segments
+### 旧命令（对锁定状态栏无效）
 
-Displays: `Directory | Git Branch Status | Model | Context Window`
-
-### Git Status Indicators
-
-- Branch name with Nerd Font icon
-- Status: `✓` Clean, `●` Dirty, `⚠` Conflicts
-- Remote tracking: `↑n` Ahead, `↓n` Behind
-
-### Model Display
-
-Shows simplified Claude model names:
-- `claude-3-5-sonnet` → `Sonnet 3.5`
-- `claude-4-sonnet` → `Sonnet 4`
-
-### Context Window Display
-
-Token usage percentage based on transcript analysis with context limit tracking.
-
-## Configuration
-
-MicuSubCodeLine supports full configuration via TOML files and interactive TUI:
-
-- **Configuration file**: `~/.claude/micusubcodeline/config.toml`
-- **Interactive TUI**: `micusubcodeline --config` for real-time editing with preview
-- **Theme files**: `~/.claude/micusubcodeline/themes/*.toml` for custom themes
-- **Automatic initialization**: `micusubcodeline --init` creates default configuration
-
-### Available Segments
-
-All segments are configurable with:
-- Enable/disable toggle
-- Custom separators and icons
-- Color customization
-- Format options
-
-Supported segments: Directory, Git, Model, Usage, Time, Cost, OutputStyle, Subscription
-
-## Requirements
-
-- **Git**: Version 1.5+ (Git 2.22+ recommended for better branch detection)
-- **Terminal**: Must support Nerd Fonts for proper icon display
-  - Install a [Nerd Font](https://www.nerdfonts.com/) (e.g., FiraCode Nerd Font, JetBrains Mono Nerd Font)
-  - Configure your terminal to use the Nerd Font
-- **Claude Code**: For statusline integration
-
-## Development
+自 v2.0.0 起状态栏已被硬锁。以下命令仍保留以兼容旧版，但**不会改变显示的状态栏**：
 
 ```bash
-# Build development version
+micusubcodeline --init      # 写入的 config.toml 在渲染时被忽略
+micusubcodeline --check     # 校验（被忽略的）配置文件
+micusubcodeline --print     # 打印（被忽略的）配置
+micusubcodeline --config    # 打开 TUI，但编辑不会作用于输出
+micusubcodeline --theme X   # 主题覆盖不会作用于输出
+```
+
+## 系统要求
+
+- **Git**: 版本 1.5+ (推荐 Git 2.22+ 以获得更好的分支检测)
+- **终端**: 必须支持 Nerd Font 图标/powerline 正常显示
+  - 安装 [Nerd Font](https://www.nerdfonts.com/) 字体
+  - 中文用户推荐: [Maple Font](https://github.com/subframe7536/maple-font) (支持中文的 Nerd Font)
+  - 在终端中配置使用该字体
+- **Claude Code**: 用于状态栏集成
+
+## 开发
+
+```bash
+# 构建开发版本
 cargo build
 
-# Run tests
+# 运行测试
 cargo test
 
-# Build optimized release
+# 构建优化版本
 cargo build --release
 ```
 
-## Contributing
+## 贡献
 
-Contributions are welcome! Please feel free to submit issues or pull requests.
+欢迎贡献！请随时提交 issue 或 pull request。
 
-## License
+## 许可证
 
-This project is licensed under the [MIT License](LICENSE).
+本项目采用 [MIT 许可证](LICENSE)。

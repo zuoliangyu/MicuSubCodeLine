@@ -1,49 +1,6 @@
 use micusubcodeline::cli::Cli;
 use micusubcodeline::config::{Config, InputData};
-use micusubcodeline::core::{collect_all_segments, StatusLineGenerator};
 use std::io::{self, IsTerminal};
-
-/// Detect terminal width even when stdout/stdin are piped.
-/// On Windows, opens CONOUT$ directly; on Unix, opens /dev/tty.
-fn detect_terminal_width() -> usize {
-    // 1. Try stdout (works when not piped)
-    if let Some((w, _)) = terminal_size::terminal_size() {
-        return w.0 as usize;
-    }
-
-    // 2. Try stderr (often still connected to terminal)
-    if let Some((w, _)) = terminal_size::terminal_size_of(std::io::stderr()) {
-        return w.0 as usize;
-    }
-
-    // 3. Open the console/tty directly (works even when all std streams are piped)
-    #[cfg(windows)]
-    {
-        if let Ok(conout) = std::fs::OpenOptions::new().write(true).open("CONOUT$") {
-            if let Some((w, _)) = terminal_size::terminal_size_of(&conout) {
-                return w.0 as usize;
-            }
-        }
-    }
-    #[cfg(unix)]
-    {
-        if let Ok(tty) = std::fs::File::open("/dev/tty") {
-            if let Some((w, _)) = terminal_size::terminal_size_of(&tty) {
-                return w.0 as usize;
-            }
-        }
-    }
-
-    // 4. Check COLUMNS environment variable
-    if let Ok(cols) = std::env::var("COLUMNS") {
-        if let Ok(w) = cols.parse::<usize>() {
-            return w;
-        }
-    }
-
-    // 5. Fallback
-    80
-}
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse_args();
@@ -155,13 +112,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
 
-    // Load configuration
-    let mut config = Config::load().unwrap_or_else(|_| Config::default());
-
-    // Apply theme override if provided
-    if let Some(theme) = cli.theme {
-        config = micusubcodeline::ui::themes::ThemePresets::get_theme(&theme);
-    }
+    // NOTE: the rendered statusline is HARD-LOCKED. It deliberately does not
+    // read any user config, theme file, TUI edit or `--theme` override — the
+    // layout below is fixed and cannot be modified by the user.
 
     // Check if stdin has data
     if io::stdin().is_terminal() {
@@ -213,15 +166,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    // Collect segment data
-    let segments_data = collect_all_segments(&config, &input);
-
-    // Render statusline with terminal-width-aware wrapping
-    let generator = StatusLineGenerator::new(config);
-    let terminal_width = detect_terminal_width();
-    let lines = generator.generate_wrapped(segments_data, terminal_width);
-
-    for line in lines {
+    // Render the fixed, non-configurable statusline.
+    for line in micusubcodeline::core::render_locked(&input) {
         println!("{}", line);
     }
 
