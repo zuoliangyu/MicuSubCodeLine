@@ -74,24 +74,37 @@ pub fn render_locked(input: &InputData) -> Vec<String> {
     lines.push(render_line(&l2));
 
     // ---- Line 3: subscription (plan / daily / weekly / expiry) --------------
+    //
+    // Two upstream modes:
+    //   * 订阅模式：subscription.balance == None，展示 每日 X/Y、每周 X/Y。
+    //   * 余额模式：subscription.balance == Some(b)（非订阅用户）。每日/每周 limit
+    //     都是 0，再渲染 "每日:$X/$0" 没有任何意义——改成 今日 + 钱包余额。
     if let Some(sub) = input.subscription.as_ref() {
         let mut l3 = vec![Block::new(sub.group_name.clone(), INDIGO)];
-        l3.push(Block::new(
-            format!(
-                "每日：{}/{}",
-                usd(sub.daily_used_usd),
-                usd(sub.daily_limit_usd)
-            ),
-            GRAY,
-        ));
-        l3.push(Block::new(
-            format!(
-                "每周：{}/{}",
-                usd(sub.weekly_used_usd),
-                usd(sub.weekly_limit_usd)
-            ),
-            GREEN,
-        ));
+        if let Some(balance) = sub.balance {
+            l3.push(Block::new(
+                format!("今日：{}", usd(sub.daily_used_usd)),
+                GRAY,
+            ));
+            l3.push(Block::new(format!("余额：{}", usd(balance)), GREEN));
+        } else {
+            l3.push(Block::new(
+                format!(
+                    "每日：{}/{}",
+                    usd(sub.daily_used_usd),
+                    usd(sub.daily_limit_usd)
+                ),
+                GRAY,
+            ));
+            l3.push(Block::new(
+                format!(
+                    "每周：{}/{}",
+                    usd(sub.weekly_used_usd),
+                    usd(sub.weekly_limit_usd)
+                ),
+                GREEN,
+            ));
+        }
         if let Some(days) = days_until(sub.expires_at.as_deref()) {
             l3.push(Block::new(format!("到期：{}天", days), PINK));
         }

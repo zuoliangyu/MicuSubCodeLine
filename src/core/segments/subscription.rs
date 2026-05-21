@@ -15,16 +15,27 @@ impl Segment for SubscriptionSegment {
     fn collect(&self, input: &InputData) -> Option<SegmentData> {
         let subscription = input.subscription.as_ref()?;
 
-        // Primary display: 订阅名称 + 费用
-        let primary = format!(
-            "{} | 今日:{} 本周:{}/{}",
-            subscription.group_name,
-            format_usd(subscription.daily_used_usd),
-            format_usd(subscription.weekly_used_usd),
-            format_usd(subscription.weekly_limit_usd)
-        );
+        // Primary display: 区分余额模式与订阅模式
+        let primary = if let Some(balance) = subscription.balance {
+            // 余额模式：今日消耗 + 钱包余额
+            format!(
+                "{} | 今日:{} 余额:{}",
+                subscription.group_name,
+                format_usd(subscription.daily_used_usd),
+                format_usd(balance)
+            )
+        } else {
+            // 订阅模式：今日消耗 + 本周消耗/限额
+            format!(
+                "{} | 今日:{} 本周:{}/{}",
+                subscription.group_name,
+                format_usd(subscription.daily_used_usd),
+                format_usd(subscription.weekly_used_usd),
+                format_usd(subscription.weekly_limit_usd)
+            )
+        };
 
-        // Secondary display: 刷新时间
+        // Secondary display: 刷新时间（余额模式无刷新概念，自然为空）
         let secondary = if let Some(ref reset) = subscription.resets_in_seconds {
             format!("刷新:{}", format_time_remaining(*reset))
         } else {
@@ -45,6 +56,12 @@ impl Segment for SubscriptionSegment {
             "weekly_limit".to_string(),
             subscription.weekly_limit_usd.to_string(),
         );
+        if let Some(balance) = subscription.balance {
+            metadata.insert("balance".to_string(), balance.to_string());
+            metadata.insert("mode".to_string(), "balance".to_string());
+        } else {
+            metadata.insert("mode".to_string(), "subscription".to_string());
+        }
 
         Some(SegmentData {
             primary,

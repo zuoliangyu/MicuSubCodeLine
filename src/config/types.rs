@@ -121,6 +121,11 @@ pub struct Subscription {
     pub resets_in_seconds: Option<i64>,
     /// Plan expiry timestamp string from `/v1/usage` (RFC3339), e.g. "2026-06-04T12:41:52+08:00"
     pub expires_at: Option<String>,
+    /// Wallet balance in USD. `Some(_)` only when the upstream `/v1/usage` response is in
+    /// "balance" mode (non-subscription users). When set, the segment renders
+    /// `今日:$X 余额:$Y` instead of the weekly usage/limit pair.
+    #[serde(default)]
+    pub balance: Option<f64>,
 }
 
 #[derive(Deserialize)]

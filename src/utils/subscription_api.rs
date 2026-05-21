@@ -190,6 +190,7 @@ impl SubscriptionApi {
                 weekly_limit_usd: sub.weekly_limit_usd.unwrap_or(0.0),
                 resets_in_seconds: sub.resets_in_seconds,
                 expires_at: sub.expires_at.clone(),
+                balance: None,
             })
         }
         // 余额模式
@@ -199,9 +200,10 @@ impl SubscriptionApi {
                 daily_used_usd: today_cost,
                 daily_limit_usd: 0.0,
                 weekly_used_usd: 0.0,
-                weekly_limit_usd: balance,
+                weekly_limit_usd: 0.0,
                 resets_in_seconds: None,
                 expires_at: None,
+                balance: Some(balance),
             })
         }
     }
