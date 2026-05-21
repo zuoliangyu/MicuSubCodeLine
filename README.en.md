@@ -18,6 +18,7 @@ The locked statusline always renders three lines:
 - **Line 1** — `模型`(Model) · `上下文`(Context) · `⌥ branch` · `(+N,−N)` git changes · `合计`(Total t/s)
 - **Line 2** — `会话`(Session) · `费用`(Cost) · `cwd` working directory
 - **Line 3** — Plan name · `每日`(Daily $used/$limit) · `每周`(Weekly $used/$limit) · `到期`(Days to expiry)
+  - For non-subscription users (wallet balance mode), Line 3 instead shows: Plan name · `今日`(Today $used) · `余额`(Wallet balance)
 
 ## Features
 
